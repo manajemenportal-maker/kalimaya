@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ksatria Kalimaya</title>
+    
+    <!-- Link penampung untuk Manifest PWA (diisi melalui JS) -->
+    <link id="pwa-manifest" rel="manifest" href="">
+    <!-- Mengubah theme-color menjadi warna emas/amber -->
+    <meta name="theme-color" content="#b45309">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Custom scrollbar nuansa gold */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fef3c7; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b45309; }
+        
+        /* PWA Install Toast */
+        #pwa-toast {
+            transform: translateY(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #pwa-toast.show {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <!-- Top Bar -->
+    <div class="bg-amber-900 text-white text-xs py-2 px-4 hidden md:flex justify-between items-center">
+        <div class="flex gap-4">
+            <span class="flex items-center gap-1"><i class="ph ph-envelope"></i> kalimayasuryaalam@gmail.com</span>
+            <span class="flex items-center gap-1"><i class="ph ph-phone"></i> 0851-1103-3789</span>
+        </div>
+        <div class="flex gap-3">
+            <a href="https://wa.me/6285111033789" target="_blank" class="hover:text-amber-300"><i class="ph ph-whatsapp-logo text-lg"></i></a>
+            <a href="#" class="hover:text-amber-300"><i class="ph ph-wechat-logo text-lg"></i></a>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="bg-amber-600 text-white p-2 rounded-lg">
+                        <i class="ph ph-shield-check text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-amber-900 leading-none">KSATRIA</h1>
+                        <span class="text-xs text-amber-600 font-semibold tracking-widest">KALIMAYA</span>
+                    </div>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#beranda" class="text-gray-900 hover:text-amber-600 font-semibold transition">Beranda</a>
+                    <a href="#produk" class="text-gray-900 hover:text-amber-600 font-semibold transition">Produk</a>
+                    <a href="#tentang" class="text-gray-900 hover:text-amber-600 font-semibold transition">Perkenalan</a>
+                    <a href="#kontak" class="text-gray-900 hover:text-amber-600 font-semibold transition">Hubungi Kami</a>
+                    <button id="btn-install-desktop" class="hidden bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg transition transform hover:scale-105 flex items-center gap-2">
+                        <i class="ph ph-download-simple"></i> Install App
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="flex items-center md:hidden gap-3">
+                    <button id="btn-install-mobile" class="hidden text-amber-700 bg-amber-50 p-2 rounded-full">
+                        <i class="ph ph-download-simple text-xl"></i>
+                    </button>
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-amber-700 focus:outline-none p-2">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <div class="px-4 pt-2 pb-6 space-y-1 shadow-inner">
+                <a href="#beranda" class="block px-3 py-3 rounded-md text-base font-medium text-gray-900 hover:bg-amber-50 hover:text-amber-700">Beranda</a>
+                <a href="#produk" class="block px-3 py-3 rounded-md text-base font-medium text-gray-900 hover:bg-amber-50 hover:text-amber-700">Produk</a>
+                <a href="#tentang" class="block px-3 py-3 rounded-md text-base font-medium text-gray-900 hover:bg-amber-50 hover:text-amber-700">Perkenalan</a>
+                <a href="#kontak" class="block px-3 py-3 rounded-md text-base font-medium text-gray-900 hover:bg-amber-50 hover:text-amber-700">Hubungi Kami</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="beranda" class="relative bg-gray-900 h-[70vh] min-h-[500px] flex items-center justify-center">
+        <!-- Background Image Fallback -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://placehold.co/1920x1080/78350f/000000?text=+" alt="Factory Background" class="w-full h-full object-cover opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-r from-amber-900/80 to-transparent"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="max-w-2xl">
+                <span class="inline-block py-1 px-3 rounded-full bg-amber-500/20 border border-amber-400 text-amber-200 text-sm font-semibold mb-4 backdrop-blur-sm">
+                    Kualitas Premium
+                </span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                    Solusi Daya & <br>Mesin <span class="text-amber-400">Terbaik</span>
+                </h1>
+                <p class="text-lg text-gray-200 mb-8 max-w-xl">
+                    Ksatria Kalimaya menyediakan Generator Set, Pompa Air, Mesin Diesel, dan Alat Listrik berkualitas tinggi untuk kebutuhan industri dan rumah tangga Anda.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#produk" class="bg-amber-600 hover:bg-amber-500 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition transform hover:-translate-y-1 flex items-center gap-2">
+                        Lihat Produk <i class="ph ph-arrow-right"></i>
+                    </a>
+                    <a href="#kontak" class="bg-transparent border-2 border-white hover:bg-white hover:text-amber-900 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition">
+                        Hubungi Kami
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="py-12 bg-white -mt-10 relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            <!-- Category 1 -->
+            <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-xl transition cursor-pointer border border-gray-100 group">
+                <div class="w-16 h-16 mx-auto bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                    <i class="ph ph-engine text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Mesin</h3>
+                <p class="text-sm text-gray-500 mt-1">Bensin & Diesel</p>
+            </div>
+            <!-- Category 2 -->
+            <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-xl transition cursor-pointer border border-gray-100 group">
+                <div class="w-16 h-16 mx-auto bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                    <i class="ph ph-lightning text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Generator Set</h3>
+                <p class="text-sm text-gray-500 mt-1">Silent & Open Type</p>
+            </div>
+            <!-- Category 3 -->
+            <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-xl transition cursor-pointer border border-gray-100 group">
+                <div class="w-16 h-16 mx-auto bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                    <i class="ph ph-drop text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Pompa Air</h3>
+                <p class="text-sm text-gray-500 mt-1">Irigasi & Industri</p>
+            </div>
+            <!-- Category 4 -->
+            <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-xl transition cursor-pointer border border-gray-100 group">
+                <div class="w-16 h-16 mx-auto bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                    <i class="ph ph-wrench text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Alat Listrik</h3>
+                <p class="text-sm text-gray-500 mt-1">Power Tools</p>
+            </div>
+            <!-- Category 5 -->
+            <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-xl transition cursor-pointer border border-gray-100 group">
+                <div class="w-16 h-16 mx-auto bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                    <i class="ph ph-tractor text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Traktor</h3>
+                <p class="text-sm text-gray-500 mt-1">Pertanian</p>
+            </div>
+            <!-- Category 6 -->
+            <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-xl transition cursor-pointer border border-gray-100 group">
+                <div class="w-16 h-16 mx-auto bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                    <i class="ph ph-gear-six text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Spare Parts</h3>
+                <p class="text-sm text-gray-500 mt-1">Hidrolik</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section id="produk" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Produk Unggulan Kami</h2>
+                <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Product 1 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group flex flex-col">
+                    <div class="relative h-48 overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x300/e2e8f0/475569?text=Generator+Silent" alt="Generator Silent" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-3 right-3 bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded">Baru</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <p class="text-xs text-amber-600 font-semibold mb-1">GENERATOR SET</p>
+                        <h3 class="font-bold text-gray-900 mb-2 leading-tight">Generator Silent YC6800T-3D 6.25 KVA Diesel</h3>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-2 flex-1">Generator diesel tipe silent dengan efisiensi tinggi dan suara bising yang rendah.</p>
+                        <button onclick="showToast('Fitur detail produk sedang dalam pengembangan')" class="w-full bg-gray-100 hover:bg-amber-600 hover:text-white text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">
+                            Lihat Lebih
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group flex flex-col">
+                    <div class="relative h-48 overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x300/e2e8f0/475569?text=Pompa+Air" alt="Pompa Air" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <p class="text-xs text-amber-600 font-semibold mb-1">POMPA AIR</p>
+                        <h3 class="font-bold text-gray-900 mb-2 leading-tight">Pompa Air Bensin 3.5 inch Ksatria</h3>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-2 flex-1">Solusi tepat untuk kebutuhan irigasi pertanian dengan debit air besar dan hemat bahan bakar.</p>
+                        <button onclick="showToast('Fitur detail produk sedang dalam pengembangan')" class="w-full bg-gray-100 hover:bg-amber-600 hover:text-white text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">
+                            Lihat Lebih
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group flex flex-col">
+                    <div class="relative h-48 overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x300/e2e8f0/475569?text=Mesin+Diesel" alt="Mesin Diesel" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <p class="text-xs text-amber-600 font-semibold mb-1">MESIN</p>
+                        <h3 class="font-bold text-gray-900 mb-2 leading-tight">Mesin Diesel Berpendingin Udara YC173F</h3>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-2 flex-1">Mesin tangguh serbaguna untuk menggerakkan berbagai macam peralatan industri dan pertanian.</p>
+                        <button onclick="showToast('Fitur detail produk sedang dalam pengembangan')" class="w-full bg-gray-100 hover:bg-amber-600 hover:text-white text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">
+                            Lihat Lebih
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group flex flex-col">
+                    <div class="relative h-48 overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x300/e2e8f0/475569?text=Generator+Bensin" alt="Generator Bensin" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <p class="text-xs text-amber-600 font-semibold mb-1">GENERATOR SET</p>
+                        <h3 class="font-bold text-gray-900 mb-2 leading-tight">Generator YC3600XE 3.5 KVA Bensin</h3>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-2 flex-1">Genset portabel berbahan bakar bensin, cocok untuk penggunaan perumahan maupun komersial ringan.</p>
+                        <button onclick="showToast('Fitur detail produk sedang dalam pengembangan')" class="w-full bg-gray-100 hover:bg-amber-600 hover:text-white text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">
+                            Lihat Lebih
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 5 (Traktor) -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group flex flex-col">
+                    <div class="relative h-48 overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x300/e2e8f0/475569?text=Traktor+Pertanian" alt="Traktor Pertanian" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">Hot Item</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <p class="text-xs text-amber-600 font-semibold mb-1">TRAKTOR</p>
+                        <h3 class="font-bold text-gray-900 mb-2 leading-tight">Traktor Pertanian Serbaguna KT-2000</h3>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-2 flex-1">Mesin traktor handal untuk berbagai kebutuhan pengolahan lahan pertanian dan perkebunan dengan efisiensi tinggi.</p>
+                        <button onclick="showToast('Fitur detail produk sedang dalam pengembangan')" class="w-full bg-gray-100 hover:bg-amber-600 hover:text-white text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">
+                            Lihat Lebih
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 6 (Spare Parts Hidrolik) -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group flex flex-col">
+                    <div class="relative h-48 overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x300/e2e8f0/475569?text=Spare+Parts+Hidrolik" alt="Spare Parts Hidrolik" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <p class="text-xs text-amber-600 font-semibold mb-1">SPARE PARTS</p>
+                        <h3 class="font-bold text-gray-900 mb-2 leading-tight">Komponen & Spare Part Hidrolik</h3>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-2 flex-1">Berbagai macam suku cadang hidrolik berkualitas tinggi untuk pemeliharaan alat berat dan mesin industri Anda.</p>
+                        <button onclick="showToast('Fitur detail produk sedang dalam pengembangan')" class="w-full bg-gray-100 hover:bg-amber-600 hover:text-white text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300">
+                            Lihat Lebih
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-10">
+                <button class="bg-white border border-amber-600 text-amber-600 hover:bg-amber-50 font-bold py-3 px-8 rounded-full transition shadow-sm">
+                    Lihat Semua Produk
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="tentang" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="w-full md:w-1/2 rounded-2xl overflow-hidden shadow-xl">
+                    <img src="https://placehold.co/800x600/92400e/ffffff?text=Fasilitas+Ksatria+Kalimaya" alt="Pabrik Ksatria Kalimaya" class="w-full h-auto">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Perkenalan Perusahaan</h2>
+                    <div class="w-16 h-1 bg-amber-600 mb-6"></div>
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Kami adalah <strong>Ksatria Kalimaya</strong>, penyedia dan distributor profesional untuk berbagai macam peralatan mesin. Komitmen kami adalah menyediakan produk berkualitas terbaik untuk mendukung produktivitas pelanggan kami di seluruh wilayah.
+                    </p>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Fokus utama kami meliputi penyediaan Mesin Bensin & Diesel, Generator Set (Genset), Pompa Air, serta berbagai Alat Listrik pendukung industri. Dengan pengalaman dan standar kontrol kualitas yang ketat, Ksatria Kalimaya adalah mitra terpercaya Anda.
+                    </p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-gray-700"><i class="ph-fill ph-check-circle text-green-500 text-xl"></i> Profesional & Berpengalaman</li>
+                        <li class="flex items-center gap-3 text-gray-700"><i class="ph-fill ph-check-circle text-green-500 text-xl"></i> Suku Cadang Terjamin</li>
+                        <li class="flex items-center gap-3 text-gray-700"><i class="ph-fill ph-check-circle text-green-500 text-xl"></i> Layanan Purna Jual Terbaik</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="kontak" class="bg-gray-900 text-gray-300 pt-16 pb-8 border-t-4 border-amber-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <!-- Brand -->
+                <div>
+                    <div class="flex items-center gap-2 mb-6">
+                        <i class="ph-fill ph-shield-check text-3xl text-amber-500"></i>
+                        <span class="text-2xl font-bold text-white">KSATRIA</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-6">Mitra penyedia mesin, generator set, dan pompa air profesional untuk solusi kelistrikan dan permesinan Anda.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-amber-600 transition"><i class="ph ph-facebook-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-amber-600 transition"><i class="ph ph-instagram-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-amber-600 transition"><i class="ph ph-youtube-logo text-xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-sm">Navigasi Cepat</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#beranda" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Rumah / Beranda</a></li>
+                        <li><a href="#tentang" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Perkenalan</a></li>
+                        <li><a href="#produk" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Produk</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Berita</a></li>
+                        <li><a href="#kontak" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Ditanyakan</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kategori Produk -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-sm">Kategori Produk</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Mesin Bensin & Diesel</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Generator Set</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Pompa Air</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Alat Listrik</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Traktor Pertanian</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition flex items-center gap-2"><i class="ph ph-caret-right"></i> Spare Parts Hidrolik</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-sm">Hubungi Kami</h4>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <i class="ph-fill ph-envelope-simple text-amber-500 text-xl mt-1"></i>
+                            <div>
+                                <span class="block text-gray-500 text-xs">Email</span>
+                                <a href="mailto:kalimayasuryaalam@gmail.com" class="hover:text-amber-400">kalimayasuryaalam@gmail.com</a>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="ph-fill ph-phone-call text-amber-500 text-xl mt-1"></i>
+                            <div>
+                                <span class="block text-gray-500 text-xs">Telepon / WhatsApp</span>
+                                <a href="tel:085111033789" class="hover:text-amber-400">0851-1103-3789</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2026 Ksatria Kalimaya. All rights reserved.</p>
+                <div class="mt-4 md:mt-0 space-x-4">
+                    <a href="#" class="hover:text-gray-300">Privacy Policy</a>
+                    <a href="#" class="hover:text-gray-300">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/6285111033789" target="_blank" class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition transform hover:scale-110 flex items-center justify-center">
+        <i class="ph-fill ph-whatsapp-logo text-3xl"></i>
+    </a>
+
+    <!-- Custom Toast Notification -->
+    <div id="custom-toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl z-[100] opacity-0 transition-opacity duration-300 pointer-events-none flex items-center gap-2">
+        <i class="ph-fill ph-info text-amber-400"></i>
+        <span id="toast-message" class="text-sm font-medium">Message</span>
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div id="pwa-toast" class="fixed bottom-0 left-0 right-0 md:bottom-6 md:left-6 md:right-auto md:w-80 bg-white p-4 md:rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] md:shadow-2xl z-50 border border-gray-100 flex flex-col gap-3">
+        <div class="flex items-center gap-4">
+            <div class="bg-amber-600 text-white p-2 rounded-lg flex-shrink-0">
+                <i class="ph ph-shield-check text-2xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-bold text-gray-900 text-sm">Kalimaya App</h4>
+                <p class="text-xs text-gray-500">Akses katalog lebih cepat!</p>
+            </div>
+            <button id="close-pwa-toast" class="text-gray-400 hover:text-gray-800">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+        <button id="btn-install-toast" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 rounded-lg text-sm transition">
+            Tambahkan ke Layar Utama
+        </button>
+    </div>
+
+    <script>
+        // --- UI Interactions ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        // Toggle mobile menu
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenuBtn.querySelector('i');
+            if(mobileMenu.classList.contains('hidden')){
+                icon.classList.remove('ph-x');
+                icon.classList.add('ph-list');
+            } else {
+                icon.classList.remove('ph-list');
+                icon.classList.add('ph-x');
+            }
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                const icon = mobileMenuBtn.querySelector('i');
+                icon.classList.remove('ph-x');
+                icon.classList.add('ph-list');
+            });
+        });
+
+        // Toast Notification System
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('custom-toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = message;
+            
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 3000);
+        }
+
+        // --- PWA Setup (Single File Workaround using Blob) ---
+        // 1. Generate Manifest
+        const manifestData = {
+            "name": "Ksatria Kalimaya",
+            "short_name": "Kalimaya",
+            "description": "Katalog Mesin, Generator, dan Pompa Air",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#b45309",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0iI2Q5NzcwNiIvPjxwYXRoIGQ9Ik0xMjgsMjRBMTA0LDEwNCwwLDEsMCwyMzIsMTI4LDEwNC4xMSwxMDQuMTEsMCwwLDAsMTI4LDI0Wm0wLDE5MkExMDQsMTA0LDAsMSwxLDIzMiwxMjgsMTA0LjExLDEwNC4xMSwwLDAsMSwxMjgsMjE2WiIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==",
+                    "sizes": "192x192",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+        
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/manifest+json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        document.getElementById('pwa-manifest').setAttribute('href', manifestUrl);
+
+        // 2. Generate Service Worker
+        const swCode = `
+            const CACHE_NAME = 'kalimaya-cache-v1';
+            const urlsToCache = [ './' ];
+
+            self.addEventListener('install', event => {
+                self.skipWaiting();
+                event.waitUntil(
+                    caches.open(CACHE_NAME)
+                    .then(cache => cache.addAll(urlsToCache))
+                );
+            });
+
+            self.addEventListener('fetch', event => {
+                event.respondWith(
+                    caches.match(event.request)
+                    .then(response => {
+                        if (response) return response;
+                        return fetch(event.request).catch(() => {});
+                    })
+                );
+            });
+        `;
+        
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(swBlob);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                try {
+                    navigator.serviceWorker.register(swUrl)
+                        .then(registration => console.log('PWA ServiceWorker registered (Blob URL).'))
+                        .catch(err => console.log('ServiceWorker registration failed (Normal for secure blob execution): ', err));
+                } catch(e) {
+                    console.log('Blob SW not supported in this environment.');
+                }
+            });
+        }
+
+        // --- PWA Installation Prompt Logic ---
+        let deferredPrompt;
+        const btnInstallDesktop = document.getElementById('btn-install-desktop');
+        const btnInstallMobile = document.getElementById('btn-install-mobile');
+        const btnInstallToast = document.getElementById('btn-install-toast');
+        const pwaToast = document.getElementById('pwa-toast');
+        const closePwaToast = document.getElementById('close-pwa-toast');
+
+        function showInstallPromotion() {
+            btnInstallDesktop.classList.remove('hidden');
+            btnInstallMobile.classList.remove('hidden');
+            setTimeout(() => { pwaToast.classList.add('show'); }, 2000);
+        }
+
+        function hideInstallPromotion() {
+            btnInstallDesktop.classList.add('hidden');
+            btnInstallMobile.classList.add('hidden');
+            pwaToast.classList.remove('show');
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallPromotion();
+        });
+
+        async function installApp() {
+            hideInstallPromotion();
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+            } else {
+                showToast('Aplikasi "Kalimaya" telah ditambahkan ke layar utama Anda.');
+            }
+        }
+
+        btnInstallDesktop.addEventListener('click', installApp);
+        btnInstallMobile.addEventListener('click', installApp);
+        btnInstallToast.addEventListener('click', installApp);
+
+        closePwaToast.addEventListener('click', () => { pwaToast.classList.remove('show'); });
+
+        setTimeout(() => {
+            if(!deferredPrompt) showInstallPromotion();
+        }, 3000);
+
+        window.addEventListener('appinstalled', () => {
+            hideInstallPromotion();
+            deferredPrompt = null;
+            showToast('Aplikasi berhasil diinstal.');
+        });
+        
+    </script>
+</body>
+</html>
